@@ -1,6 +1,5 @@
-package com.ags.rethread.ui.theme
+package com.ags.rethread.presentation.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
