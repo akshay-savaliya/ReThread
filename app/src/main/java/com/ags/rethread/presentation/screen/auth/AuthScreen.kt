@@ -17,11 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -31,20 +27,37 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.ags.rethread.R
 import com.ags.rethread.presentation.components.CustomFilledButton
 import com.ags.rethread.presentation.components.CustomOutlinedButton
 import com.ags.rethread.presentation.components.DividerWithText
 import com.ags.rethread.presentation.navigation.Routes
-import kotlinx.coroutines.launch
 
 @Composable
-fun AuthScreen(navController: NavHostController) {
+fun AuthScreen(navController: NavHostController, viewModel: AuthViewModel = hiltViewModel()) {
 
-    var isLoginLoading by remember { mutableStateOf(false) }
-    var isSignUpLoading by remember { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
+    // Collect navigation events from ViewModel
+    LaunchedEffect(Unit) {
+        viewModel.authEvent.collect { event ->
+            when (event) {
+                AuthEvent.NavigateToLogin -> {
+                    navController.navigate(Routes.Login.route) {
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
+
+                AuthEvent.NavigateToRegister -> {
+                    navController.navigate(Routes.Register.route) {
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
+            }
+        }
+    }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -64,7 +77,8 @@ fun AuthScreen(navController: NavHostController) {
                 contentDescription = "profile authentication icon",
                 modifier = Modifier
                     .size(200.dp)
-                    .aspectRatio(1f)
+                    .aspectRatio(1f),
+                tint = MaterialTheme.colorScheme.surfaceTint
             )
 
             Spacer(modifier = Modifier.height(40.dp))
@@ -92,32 +106,20 @@ fun AuthScreen(navController: NavHostController) {
             Spacer(modifier = Modifier.height(20.dp))
 
             CustomFilledButton(
-                isLoading = isLoginLoading,
+                isLoading = false,
                 text = "Log In",
                 onClick = {
-                    isLoginLoading = true
-                    scope.launch {
-                        navController.navigate(Routes.Login.route) {
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
+                    viewModel.onLoginClick()
                 }
             )
 
             DividerWithText("OR")
 
             CustomOutlinedButton(
-                isLoading = isSignUpLoading,
+                isLoading = false,
                 text = "Sign Up",
                 onClick = {
-                    isSignUpLoading = true
-                    scope.launch {
-                        navController.navigate(Routes.Register.route) {
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
+                    viewModel.onSignUpClick()
                 }
             )
         }
