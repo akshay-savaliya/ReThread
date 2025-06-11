@@ -1,4 +1,4 @@
-package com.ags.rethread.ui.theme
+package com.ags.rethread.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
