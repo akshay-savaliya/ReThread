@@ -12,6 +12,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -88,6 +89,38 @@ fun CustomOutlinedButton(
                 text = text,
                 fontSize = 22.sp,
                 fontWeight = FontWeight.SemiBold
+            )
+        }
+    }
+}
+
+@Composable
+fun CustomTextButton(
+    isLoading: Boolean,
+    enabled: Boolean = true,
+    text: String,
+    contentColor: Color = MaterialTheme.colorScheme.primary,
+    onClick: () -> Unit
+) {
+    TextButton(
+        onClick = onClick,
+        enabled = enabled,
+        colors = ButtonDefaults.textButtonColors(
+            contentColor = contentColor,
+            disabledContentColor = contentColor.copy(alpha = 0.6f)
+        )
+    ) {
+        if (isLoading) {
+            CircularProgressIndicator(
+                color = contentColor,
+                strokeWidth = 2.dp,
+                modifier = Modifier.size(24.dp)
+            )
+        } else {
+            Text(
+                text = text,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium
             )
         }
     }
