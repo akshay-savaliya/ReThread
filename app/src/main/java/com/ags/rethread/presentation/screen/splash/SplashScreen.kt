@@ -23,13 +23,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.ags.rethread.R
 import com.ags.rethread.presentation.navigation.Routes
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen(navController: NavHostController) {
+fun SplashScreen(
+    navController: NavHostController,
+    viewModel: SplashViewModel = hiltViewModel()
+) {
 
     val logoAlpha = remember { Animatable(0f) }
     val textAlpha = remember { Animatable(0f) }
@@ -38,12 +42,26 @@ fun SplashScreen(navController: NavHostController) {
         logoAlpha.animateTo(1f, animationSpec = tween(800))
         delay(300)
         textAlpha.animateTo(1f, animationSpec = tween(800))
+    }
 
-        delay(1000L)
+    // Collect navigation event
+    LaunchedEffect(Unit) {
+        viewModel.eventFlow.collect { event ->
+            when (event) {
+                SplashEvent.NavigateToAuth -> {
+                    navController.navigate(Routes.Auth.route) {
+                        popUpTo(Routes.Splash.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
 
-        navController.navigate(Routes.Auth.route) {
-            popUpTo(Routes.Splash.route) { inclusive = true }
-            launchSingleTop = true
+                SplashEvent.NavigateToMain -> {
+                    navController.navigate(Routes.Main.route) {
+                        popUpTo(Routes.Splash.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+            }
         }
     }
 
