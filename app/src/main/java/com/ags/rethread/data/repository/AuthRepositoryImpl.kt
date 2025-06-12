@@ -20,12 +20,10 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun loginUser(email: String, password: String): Result<UserModel> {
         return try {
             firebaseAuth.signInWithEmailAndPassword(email, password).await()
-            val user = firebaseAuth.currentUser
-            if (user != null) {
-                Result.success(UserModel(uid = user.uid, email = user.email ?: ""))
-            } else {
-                Result.failure(Exception("No user found"))
-            }
+            val uid = firebaseAuth.currentUser?.uid ?: return Result.failure(Exception("No UID found"))
+            val snapshot = firebaseDatabase.reference.child("users").child(uid).get().await()
+            val user = snapshot.getValue(UserModel::class.java)?.copy(uid = uid) ?: return Result.failure(Exception("User not found"))
+            Result.success(user)
         } catch (e: Exception) {
             Result.failure(e)
         }
