@@ -35,7 +35,7 @@ fun NavGraph(modifier: Modifier = Modifier) {
         }
 
         composable(route = Routes.Main.route) {
-            MainScreen(navController = navController)
+            MainScreen()
         }
     }
 }

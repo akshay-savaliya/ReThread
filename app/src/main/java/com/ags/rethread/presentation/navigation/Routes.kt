@@ -7,4 +7,9 @@ sealed class Routes(val route: String) {
     object Login : Routes("login_screen")
     object Register : Routes("register_screen")
     object Main : Routes("main_screen")
+
+    object Home : Routes("home_screen")
+    object AddThread : Routes("add_thread_screen")
+    object Search : Routes("search_screen")
+    object Profile : Routes("profile_screen")
 }

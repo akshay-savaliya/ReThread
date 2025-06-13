@@ -1,51 +1,37 @@
 package com.ags.rethread.presentation.screen.bottomnav
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import com.ags.rethread.presentation.navigation.Routes
-import com.ags.rethread.presentation.screen.auth.AuthViewModel
-import androidx.compose.runtime.getValue
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.ags.rethread.presentation.screen.addthread.AddThreadScreen
+import com.ags.rethread.presentation.screen.home.HomeScreen
+import com.ags.rethread.presentation.screen.profile.ProfileScreen
+import com.ags.rethread.presentation.screen.search.SearchScreen
 
 @Composable
-fun MainScreen(
-    navController: NavHostController,
-    viewModel: AuthViewModel = hiltViewModel()
-) {
+fun MainScreen() {
 
-    val userData by viewModel.userData.collectAsState()
+    val bottomNavController = rememberNavController()
 
-    Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(text = "Main Screen")
-        Text(text = "Name: ${userData.name}")
-        Text(text = "Username: ${userData.username}")
-        Text(text = "Bio: ${userData.bio}")
-        Text(text = "Email: ${userData.email}")
-        Text(text = "Image URL: ${userData.imageUrl}")
-        Text(text = "UID: ${userData.uid}")
-        Button(
-            onClick = {
-                viewModel.logout()
-                navController.navigate(Routes.Auth.route) {
-                    popUpTo(Routes.Main.route) { inclusive = true }
-                }
-            }
+    Scaffold(
+        bottomBar = {
+            MyBottomNavBar(bottomNavController = bottomNavController)
+        }
+    ) { paddingValues ->
+        NavHost(
+            navController = bottomNavController,
+            startDestination = Routes.Home.route,
+            modifier = Modifier.padding(paddingValues)
         ) {
-            Text(text = "Logout")
+            composable(Routes.Home.route) { HomeScreen() }
+            composable(Routes.Search.route) { SearchScreen() }
+            composable(Routes.AddThread.route) { AddThreadScreen() }
+            composable(Routes.Profile.route) { ProfileScreen() }
         }
     }
 }
