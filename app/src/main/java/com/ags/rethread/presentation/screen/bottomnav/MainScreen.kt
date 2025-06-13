@@ -1,39 +1,37 @@
 package com.ags.rethread.presentation.screen.bottomnav
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import com.ags.rethread.presentation.navigation.Routes
-import com.ags.rethread.presentation.screen.auth.AuthViewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.ags.rethread.presentation.screen.addthread.AddThreadScreen
+import com.ags.rethread.presentation.screen.home.HomeScreen
+import com.ags.rethread.presentation.screen.profile.ProfileScreen
+import com.ags.rethread.presentation.screen.search.SearchScreen
 
 @Composable
-fun MainScreen(
-    navController: NavHostController,
-    viewModel: AuthViewModel = hiltViewModel()
-) {
+fun MainScreen() {
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Button(
-            onClick = {
-                viewModel.logout()
-                navController.navigate(Routes.Auth.route) {
-                    popUpTo(Routes.Main.route) { inclusive = true }
-                }
-            }
+    val bottomNavController = rememberNavController()
 
+    Scaffold(
+        bottomBar = {
+            MyBottomNavBar(bottomNavController = bottomNavController)
+        }
+    ) { paddingValues ->
+        NavHost(
+            navController = bottomNavController,
+            startDestination = Routes.Home.route,
+            modifier = Modifier.padding(paddingValues)
         ) {
-            Text(text = "Logout")
+            composable(Routes.Home.route) { HomeScreen() }
+            composable(Routes.Search.route) { SearchScreen() }
+            composable(Routes.AddThread.route) { AddThreadScreen() }
+            composable(Routes.Profile.route) { ProfileScreen() }
         }
     }
 }
